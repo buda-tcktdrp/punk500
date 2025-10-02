@@ -11,9 +11,7 @@
       background:url('./assets/background.png') no-repeat center center fixed;
       background-size:cover;
     }
-    body::before{
-      content:""; position:fixed; inset:0; background:rgba(0,0,0,.72); z-index:0;
-    }
+    body::before{ content:""; position:fixed; inset:0; background:rgba(0,0,0,.72); z-index:0; }
     main{ position:relative; z-index:1; }
     .card{ border-radius:1rem; box-shadow:0 12px 30px rgba(0,0,0,.18) }
   </style>
@@ -74,38 +72,46 @@
     </div>
   </section>
 
-  <!-- PREVIEW / MOCK CARD -->
+  <!-- PREVIEW / MOCK CARDS -->
   <section id="start" class="py-14">
     <div class="max-w-5xl mx-auto px-6">
-      <div class="grid md:grid-cols-[1fr,1.2fr] gap-8 items-center">
+      <div class="grid md:grid-cols-[1fr,1.2fr] gap-8 items-start">
+        <!-- MINOR THREAT PREVIEW -->
         <div class="card bg-white/5 p-6">
           <div class="text-xs uppercase tracking-widest text-slate-300 mb-2">Preview</div>
-          <h3 class="text-2xl font-bold">Minor Threat — Out of Step (1983)</h3>
-          <p class="mt-3 text-slate-200">
-            A DC staple that defined straight-edge hardcore’s velocity and stance — fast, sharp,
-            and surprisingly melodic. From the opening burst to the title track, it’s a short
-            masterclass in urgency.
-          </p>
-          <div class="mt-4 flex flex-wrap gap-3">
-            <a class="px-4 py-2 rounded-lg bg-white text-black font-semibold hover:bg-slate-200 transition"
-               href="#" onclick="alert('Demo only — real session coming soon'); return false;">Start your journey</a>
-            <a id="demoSpotify" class="px-4 py-2 rounded-lg bg-black/40 backdrop-blur hover:bg-black/60 transition"
-               target="_blank" rel="noopener">Open on Spotify</a>
-            <a id="demoYt" class="px-4 py-2 rounded-lg bg-black/40 backdrop-blur hover:bg-black/60 transition"
-               target="_blank" rel="noopener">Open on YT Music</a>
-          </div>
-          <div class="mt-6">
-            <div class="w-full h-2 bg-white/20 rounded-full overflow-hidden">
-              <div class="h-2 bg-white" style="width:24%"></div>
+          <div class="flex gap-4 items-start">
+            <div class="w-[120px] h-[120px] bg-slate-200 flex items-center justify-center text-[10px] uppercase tracking-wide"
+                 data-cover-mt>Cover</div>
+            <div class="flex-1">
+              <h3 class="text-2xl font-bold">Minor Threat — Out of Step (1983)</h3>
+              <p class="mt-3 text-slate-200">
+                A DC staple that defined straight-edge hardcore’s velocity and stance — fast, sharp,
+                and surprisingly melodic. From the opening burst to the title track, it’s a short
+                masterclass in urgency.
+              </p>
+              <div class="mt-4 flex flex-wrap gap-3">
+                <a class="px-4 py-2 rounded-lg bg-white text-black font-semibold hover:bg-slate-200 transition"
+                   href="#" onclick="alert('Demo only — real session coming soon'); return false;">Start your journey</a>
+                <a id="demoSpotify" class="px-4 py-2 rounded-lg bg-black/40 backdrop-blur hover:bg-black/60 transition"
+                   target="_blank" rel="noopener">Open on Spotify</a>
+                <a id="demoYt" class="px-4 py-2 rounded-lg bg-black/40 backdrop-blur hover:bg-black/60 transition"
+                   target="_blank" rel="noopener">Open on YT Music</a>
+              </div>
+              <div class="mt-6">
+                <div class="w-full h-2 bg-white/20 rounded-full overflow-hidden">
+                  <div class="h-2 bg-white" style="width:24%"></div>
+                </div>
+                <div class="mt-2 text-sm text-slate-300">Progress (demo): 120 / 500</div>
+              </div>
             </div>
-            <div class="mt-2 text-sm text-slate-300">Progress (demo): 120 / 500</div>
           </div>
         </div>
 
+        <!-- DISCHARGE MOCK -->
         <div class="card bg-white overflow-hidden text-slate-900">
           <div class="grid grid-cols-[120px,1fr] gap-5 p-6">
             <div class="w-[120px] h-[120px] bg-slate-200 flex items-center justify-center text-xs uppercase tracking-wide"
-                 data-demo-cover>Cover</div>
+                 data-cover-dc>Cover</div>
             <div>
               <div class="text-xs uppercase tracking-wider text-slate-500">Daily album (mock)</div>
               <h4 class="text-xl font-bold mt-1">Discharge — Hear Nothing See Nothing Say Nothing (1982)</h4>
@@ -144,29 +150,45 @@
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
 
-    (async function() {
-      const artist = "Minor Threat";
-      const album  = "Out of Step";
+    async function loadCover({ artist, album, boxSelector, spotifyId, ytId }) {
       try {
         const r = await fetch(`/api/album-meta?artist=${encodeURIComponent(artist)}&album=${encodeURIComponent(album)}`);
         const data = await r.json();
-        const coverBox = document.querySelector('[data-demo-cover]');
-        if (coverBox && data.coverUrl) {
-          coverBox.style.backgroundImage = `url('${data.coverUrl}')`;
-          coverBox.style.backgroundSize = 'cover';
-          coverBox.style.backgroundPosition = 'center';
-          coverBox.textContent = '';
+        const box = document.querySelector(boxSelector);
+        if (box && data.coverUrl) {
+          box.style.backgroundImage = `url('${data.coverUrl}')`;
+          box.style.backgroundSize = 'cover';
+          box.style.backgroundPosition = 'center';
+          box.textContent = '';
         }
-        if (data.links) {
-          const sp = document.getElementById('demoSpotify');
-          const yt = document.getElementById('demoYt');
-          if (sp) sp.href = data.links.spotifySearchUrl;
-          if (yt) yt.href = data.links.ytMusicSearchUrl;
+        if (spotifyId && data.links?.spotifySearchUrl) {
+          const el = document.getElementById(spotifyId);
+          if (el) el.href = data.links.spotifySearchUrl;
         }
-      } catch (err) {
-        console.error("Album meta fetch failed:", err);
+        if (ytId && data.links?.ytMusicSearchUrl) {
+          const el = document.getElementById(ytId);
+          if (el) el.href = data.links.ytMusicSearchUrl;
+        }
+      } catch (e) {
+        console.error("album-meta error:", e);
       }
-    })();
+    }
+
+    // 1) Minor Threat – Out of Step → első kártya
+    loadCover({
+      artist: "Minor Threat",
+      album:  "Out of Step",
+      boxSelector: "[data-cover-mt]",
+      spotifyId: "demoSpotify",
+      ytId: "demoYt"
+    });
+
+    // 2) Discharge – Hear Nothing See Nothing Say Nothing → második kártya
+    loadCover({
+      artist: "Discharge",
+      album:  "Hear Nothing See Nothing Say Nothing",
+      boxSelector: "[data-cover-dc]"
+    });
   </script>
 </body>
 </html>
