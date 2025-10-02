@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>500 Punk/Hardcore albums you need to listen… | TicketDrop</title>
+  <meta name="description" content="A weekday-by-weekday journey through 500 essential punk & hardcore albums (1977–2000).">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body{
@@ -11,14 +12,11 @@
       background-size:cover;
     }
     .card{ border-radius:1rem; background:black; color:white; box-shadow:0 12px 30px rgba(0,0,0,.7); }
-    .btn-main{ @apply px-5 py-3 rounded-xl font-bold transition; }
-    .btn-white{ @apply btn-main bg-white text-black hover:bg-white/90; }
-    .btn-dark{ @apply btn-main bg-black border border-white text-white hover:bg-white hover:text-black; }
   </style>
 </head>
 <body class="text-white">
   <!-- HERO -->
-  <header class="min-h-[80vh] flex items-center bg-black/60">
+  <header class="min-h-[80vh] flex items-center">
     <main class="max-w-5xl mx-auto px-6 py-10">
       <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
         500 Punk/Hardcore albums you need to listen…
@@ -33,9 +31,16 @@
         you just change the subject.
       </p>
 
+      <!-- TOP CTAs: fehér dobozok, fekete szöveg -->
       <div class="mt-8 flex flex-wrap gap-3">
-        <a href="#start" class="btn-white">Start your journey</a>
-        <a href="#how" class="btn-dark">How it works</a>
+        <a href="#start"
+           class="inline-block bg-white text-black font-bold px-5 py-3 rounded-xl shadow hover:bg-white/90 transition">
+          Start your journey
+        </a>
+        <a href="#how"
+           class="inline-block bg-white text-black font-semibold px-5 py-3 rounded-xl shadow hover:bg-white/90 transition">
+          How it works
+        </a>
       </div>
     </main>
   </header>
@@ -67,7 +72,7 @@
       <div class="grid md:grid-cols-[1fr,1.2fr] gap-8 items-start">
         <!-- MINOR THREAT PREVIEW -->
         <div class="card p-6">
-          <div class="text-xs uppercase tracking-widest text-slate-400 mb-2">Preview</div>
+          <div class="text-xs uppercase tracking-widest text-slate-300 mb-3">Preview</div>
           <div class="flex gap-4 items-start">
             <div class="w-[120px] h-[120px] bg-slate-800 flex items-center justify-center text-[10px] uppercase tracking-wide"
                  data-cover-mt>Cover</div>
@@ -78,29 +83,34 @@
                 and surprisingly melodic. From the opening burst to the title track, it’s a short
                 masterclass in urgency.
               </p>
+              <!-- Kártyagombok: fehér hátterű, fekete szöveg -->
               <div class="mt-4 flex flex-wrap gap-3">
-                <a class="btn-white" href="#" onclick="alert('Demo only — real session coming soon'); return false;">Start your journey</a>
-                <a id="demoSpotify" class="btn-dark" target="_blank" rel="noopener">Open on Spotify</a>
-                <a id="demoYt" class="btn-dark" target="_blank" rel="noopener">Open on YT Music</a>
+                <a class="inline-block bg-white text-black font-bold px-4 py-2 rounded-lg shadow hover:bg-white/90 transition"
+                   href="#" onclick="alert('Demo only — real session coming soon'); return false;">Start your journey</a>
+                <a id="demoSpotify" class="inline-block bg-white text-black font-semibold px-4 py-2 rounded-lg shadow hover:bg-white/90 transition"
+                   target="_blank" rel="noopener">Open on Spotify</a>
+                <a id="demoYt" class="inline-block bg-white text-black font-semibold px-4 py-2 rounded-lg shadow hover:bg-white/90 transition"
+                   target="_blank" rel="noopener">Open on YT Music</a>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- DISCHARGE MOCK -->
+        <!-- DAILY ALBUM (MOCK) -->
         <div class="card overflow-hidden">
           <div class="grid grid-cols-[120px,1fr] gap-5 p-6">
             <div class="w-[120px] h-[120px] bg-slate-800 flex items-center justify-center text-xs uppercase tracking-wide"
                  data-cover-dc>Cover</div>
             <div>
-              <div class="text-xs uppercase tracking-wider text-slate-400">Daily album (mock)</div>
+              <div class="text-xs uppercase tracking-wider text-slate-300">Daily album (mock)</div>
               <h4 class="text-xl font-bold mt-1">Discharge — Hear Nothing See Nothing Say Nothing (1982)</h4>
               <p class="mt-2 text-slate-200 text-sm">
                 D-beat blueprint: raw, relentless, and political. The sound that launched a thousand crust bands.
               </p>
+              <!-- Itt is fehér hátteres gombok -->
               <div class="mt-3 flex flex-wrap gap-2">
-                <button class="btn-white text-sm">I listened to it</button>
-                <button class="btn-dark text-sm">Skip today</button>
+                <button class="bg-white text-black font-semibold px-4 py-2 rounded-lg shadow hover:bg-white/90 text-sm">I listened to it</button>
+                <button class="bg-white text-black font-semibold px-4 py-2 rounded-lg shadow hover:bg-white/90 text-sm">Skip today</button>
               </div>
             </div>
           </div>
@@ -108,8 +118,9 @@
 
       </div>
 
+      <!-- Alsó CTA: fehér hátteres, gombszerű -->
       <div class="mt-10 text-center">
-        <a class="btn-white"
+        <a class="inline-block bg-white text-black font-bold px-6 py-3 rounded-xl shadow hover:bg-white/90 transition"
            href="#" onclick="alert('Demo only — sessions coming next.'); return false;">
           Start your journey now
         </a>
@@ -150,6 +161,7 @@
       }
     }
 
+    // Bal kártya (Preview)
     loadCover({
       artist: "Minor Threat",
       album:  "Out of Step",
@@ -158,6 +170,7 @@
       ytId: "demoYt"
     });
 
+    // Jobb kártya (Daily album – mock)
     loadCover({
       artist: "Discharge",
       album:  "Hear Nothing See Nothing Say Nothing",
