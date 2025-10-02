@@ -1,189 +1,197 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>500 Punk/Hardcore albums</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>500 Punk/Hardcore albums you need to listen… | TicketDrop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      color: white;
-      background: black url('background.png') no-repeat center top;
-      background-size: cover;
-    }
-    header {
-      padding: 80px 20px;
-      text-align: center;
-    }
-    header h1 span, header p span {
-      display: inline-block;
-      background: black;
-      padding: 2px 6px;
-      margin: 2px 0;
-    }
-    header .cta-buttons {
-      margin-top: 20px;
-    }
-    header .cta-buttons a {
-      background: white;
-      color: black;
-      padding: 10px 20px;
-      margin: 0 5px;
-      border-radius: 10px;
-      font-weight: bold;
-      text-transform: uppercase;
-      text-decoration: none;
-    }
-    .section {
-      padding: 40px 20px;
-      text-align: center;
-    }
-    .cards {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 20px;
-      padding: 40px;
-    }
-    .card {
-      background: #000;
-      border: 1px solid #444;
-      padding: 20px;
-      border-radius: 12px;
-      max-width: 360px;
-      text-align: left;
-    }
-    .card img {
-      max-width: 100%;
-      border-radius: 6px;
-      margin-bottom: 15px;
-    }
-    .card h3 {
-      margin: 10px 0;
-    }
-    .buttons a {
-      display: block;
-      background: white;
-      color: black;
-      text-align: center;
-      padding: 8px;
-      margin: 6px 0;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .session-buttons {
-      margin-top: 15px;
-      padding: 10px;
-      background: #111;
-      border-radius: 8px;
-      text-align: center;
-    }
-    .session-buttons button {
-      background: black;
-      color: white;
-      border: 1px solid white;
-      padding: 8px 14px;
-      margin: 5px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .progress {
-      background: #333;
-      border-radius: 6px;
-      overflow: hidden;
-      margin: 15px 0;
-    }
-    .progress-bar {
-      height: 12px;
-      background: white;
-      width: 25%;
-    }
-    .extras {
-      margin-top: 15px;
-    }
-    .extras summary {
-      cursor: pointer;
-      background: #111;
-      padding: 6px;
-      border-radius: 6px;
-      font-weight: bold;
-    }
-    textarea {
-      width: 100%;
-      height: 60px;
-      margin-top: 10px;
-      background: #111;
-      color: white;
-      border: 1px solid #444;
-      border-radius: 6px;
-      padding: 6px;
-    }
-    .rating {
-      margin: 10px 0;
-    }
-    .rating span {
-      font-size: 20px;
-      cursor: pointer;
-    }
+    body{ background:url('./assets/background.png') no-repeat center top; background-size:cover; }
+    .grain{ position:fixed; inset:0; pointer-events:none; opacity:.06; mix-blend-mode:overlay; background-image:
+      radial-gradient(1px 1px at 10% 20%, #000 50%, transparent 51%),
+      radial-gradient(1px 1px at 30% 80%, #000 50%, transparent 51%),
+      radial-gradient(1px 1px at 70% 10%, #000 50%, transparent 51%),
+      radial-gradient(1px 1px at 90% 60%, #000 50%, transparent 51%);
+      background-size:3px 3px,3px 3px,3px 3px,3px 3px; }
+    .card{ border-radius:1rem; background:#000; color:#fff; border:1px solid rgba(255,255,255,.18); box-shadow:0 16px 36px rgba(0,0,0,.7); }
+    .btn-white{ display:inline-block; background:#fff; color:#000; font-weight:700; padding:.7rem 1rem; border-radius:.9rem; box-shadow:0 6px 16px rgba(0,0,0,.35); }
+    .btn-white:hover{ background:#f2f2f2 }
+    .progress-track{ height:8px; background:rgba(255,255,255,.18); border-radius:999px; overflow:hidden }
+    .progress-fill{ height:8px; background:#fff; width:24% }
   </style>
 </head>
-<body>
+<body class="text-white">
+  <div class="grain" aria-hidden="true"></div>
 
-  <header>
-    <h1>
-      <span>500 Punk/Hardcore albums</span><br>
-      <span>you need to listen…</span>
-    </h1>
-    <p>
-      <span>Feeling like a poser sometimes? You show up at shows, but half the time you have no clue what’s on everyone else’s T-shirt.</span><br>
-      <span>You nod along when someone says “oh, that record is legendary”, but secretly you’ve never even heard it.</span><br>
-      <span>You can’t name three Negative Approach songs without peeking at Discogs.</span><br>
-      <span>And when someone drops Siege or Totalitär in conversation, you just change the subject.</span><br>
-      <span>Don’t worry — we’ve all been there. This project gives you one essential album every weekday (Mon–Fri),</span><br>
-      <span>with cover art, a short story, and links to actually listen.</span><br>
-      <span>By the end you’ll know your Out of Step from your Out of Vogue, and you’ll never feel lost in the pit again.</span>
-    </p>
-    <div class="cta-buttons">
-      <a href="#start">Start your journey</a>
-      <a href="#how">How it works</a>
+  <!-- HERO with per-line black bars -->
+  <header class="min-h-[70vh] flex items-center">
+    <div class="max-w-5xl mx-auto px-6 w-full">
+      <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
+        <span class="inline-block bg-black px-2">500 Punk/Hardcore albums</span><br/>
+        <span class="inline-block bg-black px-2">you need to listen…</span>
+      </h1>
+
+      <p class="text-lg md:text-xl space-y-1">
+        <span class="block bg-black px-2">Feeling like a poser sometimes? You show up at shows, but half the time you have no clue what’s on everyone else’s T-shirt.</span>
+        <span class="block bg-black px-2">You nod along when someone says “oh, that record is legendary”, but secretly you’ve never even heard it.</span>
+        <span class="block bg-black px-2">You can’t name three Negative Approach songs without peeking at Discogs.</span>
+        <span class="block bg-black px-2">And when someone drops <em>Siege</em> or <em>Totalitär</em> in conversation, you just change the subject.</span>
+        <span class="block bg-black px-2">Don’t worry — we’ve all been there. This project gives you one essential album every weekday (Mon–Fri), with cover art, a short story, and links to actually listen.</span>
+        <span class="block bg-black px-2">By the end you’ll know your <em>Out of Step</em> from your <em>Out of Vogue</em>, and you’ll never feel lost in the pit again.</span>
+      </p>
+
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href="#start" class="btn-white">START YOUR JOURNEY</a>
+        <a href="#how" class="btn-white">HOW IT WORKS</a>
+      </div>
     </div>
   </header>
 
-  <section class="cards" id="start">
-    <div class="card">
-      <img src="https://coverartarchive.org/release-group/058b4a3a-722f-4f82-9cb2-fd88f3f6e3de/front" alt="Minor Threat">
-      <h3>Minor Threat — Out of Step (1983)</h3>
-      <p>A DC staple that defined straight-edge hardcore’s velocity and stance — fast, sharp, and surprisingly melodic.</p>
-      <div class="buttons">
-        <a href="#">Open on Spotify</a>
-        <a href="#">Open on YT Music</a>
-        <a href="#">Open on Discogs</a>
-      </div>
-      <div class="session-buttons">
-        <button>I listened to it</button>
-        <button>Skip today</button>
-      </div>
-      <div class="progress">
-        <div class="progress-bar"></div>
-      </div>
-      <div class="extras">
-        <details>
-          <summary>Notes & Rating</summary>
-          <textarea placeholder="Write your thoughts..."></textarea>
-          <div class="rating">
-            <span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span>
-          </div>
-        </details>
-        <details>
-          <summary>Read more</summary>
-          <p>Longer description or external review could go here. Example: AllMusic, Punknews.org or Pitchfork links.</p>
-        </details>
+  <!-- HOW IT WORKS -->
+  <section id="how" class="py-10">
+    <div class="max-w-5xl mx-auto px-6">
+      <h2 class="text-2xl md:text-3xl font-bold mb-6">How it works</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="card p-6">
+          <div class="text-sm uppercase tracking-widest text-slate-300 mb-2">1 — Start</div>
+          <p>Create your session and get a personal link. It’s your own route through the 500.</p>
+        </div>
+        <div class="card p-6">
+          <div class="text-sm uppercase tracking-widest text-slate-300 mb-2">2 — Weekdays only</div>
+          <p>Every Mon–Fri at midnight (Europe/Budapest) you get one album with a short blurb, cover, and Spotify / YouTube Music links.</p>
+        </div>
+        <div class="card p-6">
+          <div class="text-sm uppercase tracking-widest text-slate-300 mb-2">3 — Progress</div>
+          <p>Mark it as listened. Didn’t listen? It moves to the end of your queue. Finish all 500 like a champ.</p>
+        </div>
       </div>
     </div>
   </section>
 
+  <!-- UNIFORM CARDS -->
+  <section id="start" class="py-12">
+    <div class="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-8 items-start">
+      <!-- Card template (Minor Threat) -->
+      <article class="card p-6">
+        <div class="grid grid-cols-[120px,1fr] gap-5">
+          <div class="w-[120px] h-[120px] bg-slate-800 rounded-md border border-white/20 flex items-center justify-center text-[10px] uppercase tracking-wide"
+               data-cover-mt>Cover</div>
+          <div>
+            <h3 class="text-xl font-extrabold">Minor Threat — Out of Step (1983)</h3>
+            <p class="mt-2 text-slate-200 text-sm">A DC staple that defined straight-edge hardcore’s velocity and stance — fast, sharp, and surprisingly melodic.</p>
+
+            <!-- OUTBOUND LINKS -->
+            <div class="mt-4 space-y-2">
+              <a id="mtSpotify" class="btn-white w-full text-center">Open on Spotify</a>
+              <a id="mtYt" class="btn-white w-full text-center">Open on YT Music</a>
+              <a id="mtDiscogs" class="btn-white w-full text-center">Open on Discogs</a>
+            </div>
+
+            <!-- SESSION ACTIONS -->
+            <div class="mt-4 p-3 bg-black/60 rounded-lg border border-white/15">
+              <div class="flex flex-wrap gap-2">
+                <button class="px-4 py-2 rounded-lg border border-white text-white font-semibold">I listened to it</button>
+                <button class="px-4 py-2 rounded-lg border border-white text-white font-semibold">Skip today</button>
+              </div>
+              <div class="mt-4">
+                <div class="progress-track"><div class="progress-fill"></div></div>
+                <div class="mt-1 text-xs text-slate-300">Progress (demo): 120 / 500</div>
+              </div>
+            </div>
+
+            <!-- OPTIONALS (collapsed) -->
+            <details class="mt-4">
+              <summary class="cursor-pointer text-sm font-bold">Notes & rating</summary>
+              <textarea class="mt-2 w-full h-24 bg-black/70 border border-white/20 rounded-md p-2 text-sm" placeholder="Write your thoughts…"></textarea>
+              <div class="mt-2 text-sm">Rating: ☆ ☆ ☆ ☆ ☆</div>
+            </details>
+
+            <details class="mt-2">
+              <summary class="cursor-pointer text-sm font-bold">Read more</summary>
+              <p class="mt-2 text-sm text-slate-200">Longer description or links to real reviews (AllMusic, Punknews, etc.).</p>
+            </details>
+          </div>
+        </div>
+      </article>
+
+      <!-- Same card style (Discharge) -->
+      <article class="card p-6">
+        <div class="grid grid-cols-[120px,1fr] gap-5">
+          <div class="w-[120px] h-[120px] bg-slate-800 rounded-md border border-white/20 flex items-center justify-center text-[10px] uppercase tracking-wide"
+               data-cover-dc>Cover</div>
+          <div>
+            <h3 class="text-xl font-extrabold">Discharge — Hear Nothing See Nothing Say Nothing (1982)</h3>
+            <p class="mt-2 text-slate-200 text-sm">D-beat blueprint: raw, relentless, and political. The sound that launched a thousand crust bands.</p>
+
+            <div class="mt-4 space-y-2">
+              <a id="dcSpotify" class="btn-white w-full text-center">Open on Spotify</a>
+              <a id="dcYt" class="btn-white w-full text-center">Open on YT Music</a>
+              <a id="dcDiscogs" class="btn-white w-full text-center">Open on Discogs</a>
+            </div>
+
+            <div class="mt-4 p-3 bg-black/60 rounded-lg border border-white/15">
+              <div class="flex flex-wrap gap-2">
+                <button class="px-4 py-2 rounded-lg border border-white text-white font-semibold">I listened to it</button>
+                <button class="px-4 py-2 rounded-lg border border-white text-white font-semibold">Skip today</button>
+              </div>
+              <div class="mt-4">
+                <div class="progress-track"><div class="progress-fill" style="width: 52%"></div></div>
+                <div class="mt-1 text-xs text-slate-300">Progress (demo): 260 / 500</div>
+              </div>
+            </div>
+
+            <details class="mt-4">
+              <summary class="cursor-pointer text-sm font-bold">Notes & rating</summary>
+              <textarea class="mt-2 w-full h-24 bg-black/70 border border-white/20 rounded-md p-2 text-sm" placeholder="Write your thoughts…"></textarea>
+              <div class="mt-2 text-sm">Rating: ☆ ☆ ☆ ☆ ☆</div>
+            </details>
+
+            <details class="mt-2">
+              <summary class="cursor-pointer text-sm font-bold">Read more</summary>
+              <p class="mt-2 text-sm text-slate-200">Longer description or links to real reviews (AllMusic, Punknews, etc.).</p>
+            </details>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Bottom main CTA -->
+    <div class="text-center mt-10">
+      <a class="btn-white uppercase tracking-wide font-extrabold px-6 py-4 rounded-xl" href="#" onclick="alert('Demo only — sessions coming soon'); return false;">Start your journey now</a>
+    </div>
+  </section>
+
+  <footer class="py-10 text-center text-slate-200 text-sm bg-black/70">
+    <div class="max-w-5xl mx-auto px-6">© <span id="y"></span> TicketDrop</div>
+  </footer>
+
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    async function hydrate(artist, album, coverSel, ids) {
+      const r = await fetch(`/api/album-meta?artist=${encodeURIComponent(artist)}&album=${encodeURIComponent(album)}`);
+      const data = await r.json();
+      const box = document.querySelector(coverSel);
+      if (box && data.coverUrl) {
+        box.style.backgroundImage = `url('${data.coverUrl}')`;
+        box.style.backgroundSize = 'cover';
+        box.style.backgroundPosition = 'center';
+        box.textContent = '';
+      }
+      if (ids.spotify && data.links?.spotifySearchUrl) document.getElementById(ids.spotify).href = data.links.spotifySearchUrl;
+      if (ids.yt && data.links?.ytMusicSearchUrl) document.getElementById(ids.yt).href = data.links.ytMusicSearchUrl;
+      if (ids.discogs && data.links?.discogsSearchUrl) document.getElementById(ids.discogs).href = data.links.discogsSearchUrl;
+    }
+
+    // Minor Threat
+    hydrate("Minor Threat", "Out of Step", "[data-cover-mt]", {
+      spotify: "mtSpotify", yt: "mtYt", discogs: "mtDiscogs"
+    });
+
+    // Discharge
+    hydrate("Discharge", "Hear Nothing See Nothing Say Nothing", "[data-cover-dc]", {
+      spotify: "dcSpotify", yt: "dcYt", discogs: "dcDiscogs"
+    });
+  </script>
 </body>
 </html>
