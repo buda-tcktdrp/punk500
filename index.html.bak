@@ -89,12 +89,10 @@
           <div class="mt-4 flex flex-wrap gap-3">
             <a class="px-4 py-2 rounded-lg bg-white text-black font-semibold hover:bg-slate-200 transition"
                href="#" onclick="alert('Demo only — real session coming soon'); return false;">Start your journey</a>
-            <a class="px-4 py-2 rounded-lg bg-black/40 backdrop-blur hover:bg-black/60 transition"
-               target="_blank" rel="noopener"
-               href="https://open.spotify.com/search/Minor%20Threat%20Out%20of%20Step">Open on Spotify</a>
-            <a class="px-4 py-2 rounded-lg bg-black/40 backdrop-blur hover:bg-black/60 transition"
-               target="_blank" rel="noopener"
-               href="https://music.youtube.com/search?q=Minor%20Threat%20Out%20of%20Step">Open on YT Music</a>
+            <a id="demoSpotify" class="px-4 py-2 rounded-lg bg-black/40 backdrop-blur hover:bg-black/60 transition"
+               target="_blank" rel="noopener">Open on Spotify</a>
+            <a id="demoYt" class="px-4 py-2 rounded-lg bg-black/40 backdrop-blur hover:bg-black/60 transition"
+               target="_blank" rel="noopener">Open on YT Music</a>
           </div>
           <div class="mt-6">
             <div class="w-full h-2 bg-white/20 rounded-full overflow-hidden">
@@ -106,9 +104,8 @@
 
         <div class="card bg-white overflow-hidden text-slate-900">
           <div class="grid grid-cols-[120px,1fr] gap-5 p-6">
-            <div class="w-[120px] h-[120px] bg-slate-200 flex items-center justify-center text-xs uppercase tracking-wide">
-              Cover
-            </div>
+            <div class="w-[120px] h-[120px] bg-slate-200 flex items-center justify-center text-xs uppercase tracking-wide"
+                 data-demo-cover>Cover</div>
             <div>
               <div class="text-xs uppercase tracking-wider text-slate-500">Daily album (mock)</div>
               <h4 class="text-xl font-bold mt-1">Discharge — Hear Nothing See Nothing Say Nothing (1982)</h4>
@@ -144,6 +141,32 @@
     </div>
   </footer>
 
-  <script>document.getElementById('y').textContent=new Date().getFullYear()</script>
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    (async function() {
+      const artist = "Minor Threat";
+      const album  = "Out of Step";
+      try {
+        const r = await fetch(`/api/album-meta?artist=${encodeURIComponent(artist)}&album=${encodeURIComponent(album)}`);
+        const data = await r.json();
+        const coverBox = document.querySelector('[data-demo-cover]');
+        if (coverBox && data.coverUrl) {
+          coverBox.style.backgroundImage = `url('${data.coverUrl}')`;
+          coverBox.style.backgroundSize = 'cover';
+          coverBox.style.backgroundPosition = 'center';
+          coverBox.textContent = '';
+        }
+        if (data.links) {
+          const sp = document.getElementById('demoSpotify');
+          const yt = document.getElementById('demoYt');
+          if (sp) sp.href = data.links.spotifySearchUrl;
+          if (yt) yt.href = data.links.ytMusicSearchUrl;
+        }
+      } catch (err) {
+        console.error("Album meta fetch failed:", err);
+      }
+    })();
+  </script>
 </body>
 </html>
