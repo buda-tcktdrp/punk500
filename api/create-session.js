@@ -78,7 +78,7 @@ export default async function handler(req, res) {
     }
 
     // 3) URL összerakása
-    const sessionUrl = `${SITE_BASE_URL}/session/${id}`;
+    const sessionUrl = `${SITE_BASE_URL}/session?id=${encodeURIComponent(id)}`;
 
     // 4) Email küldés (best-effort)
     if (RESEND_API_KEY && EMAIL_FROM) {
