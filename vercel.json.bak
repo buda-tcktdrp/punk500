@@ -1,6 +1,8 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/session/(.*)", "destination": "/session/index.html" }
+    { "source": "/session", "destination": "/session/index.html" },
+    { "source": "/session/:id", "destination": "/session/index.html" },
+    { "source": "/session/:id*", "destination": "/session/index.html" }
   ]
 }
