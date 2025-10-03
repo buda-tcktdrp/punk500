@@ -14,48 +14,45 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Consent required' });
     }
 
-    const SITE_BASE_URL = process.env.SITE_BASE_URL || `https://${req.headers.host}`;
-    const KV_URL        = process.env.UPSTASH_REDIS_REST_URL;
-    const KV_TOKEN      = process.env.UPSTASH_REDIS_REST_TOKEN;
-    const RESEND_API_KEY= process.env.RESEND_API_KEY;
-    const EMAIL_FROM    = process.env.EMAIL_FROM; // pl. noreply@send.ticketdrop.hu
+    const SITE_BASE_URL  = process.env.SITE_BASE_URL || `https://${req.headers.host}`;
+    // ⬇⬇⬇  **EZEKET** adta hozzá a Vercel, ezeket kell használni
+    const KV_URL         = process.env.KV_REST_API_URL;
+    const KV_TOKEN       = process.env.KV_REST_API_TOKEN;
+    const RESEND_API_KEY = process.env.RESEND_API_KEY;
+    const EMAIL_FROM     = process.env.EMAIL_FROM;
 
     if (!KV_URL || !KV_TOKEN) {
-      return res.status(500).json({ error: 'KV not configured' });
-    }
-    if (!RESEND_API_KEY || !EMAIL_FROM) {
-      // Nem blokkoljuk a flow-t, de jelezzük, hogy e-mailhez hiány van
-      console.warn('Email not fully configured (RESEND_API_KEY / EMAIL_FROM).');
+      return res.status(500).json({ error: 'KV not configured (KV_REST_API_URL / KV_REST_API_TOKEN missing)' });
     }
 
-    // --- 1) slug + unique id ---
+    // 1) slug + unique id
     const slug = name.toLowerCase()
       .replace(/[^a-z0-9-_.]/g, '-')
       .replace(/-+/g, '-')
       .replace(/^[-_.]+|[-_.]+$/g, '')
       .slice(0, 32);
 
-    let id, exists = true, attempts = 0;
-    while (exists && attempts < 5) {
-      const token = Math.random().toString(36).slice(2, 8); // 6 chars
+    // ütközés-ellenőrzés
+    let id, exists = true, tries = 0;
+    while (exists && tries < 5) {
+      const token = Math.random().toString(36).slice(2, 8);
       id = `${slug}-${token}`;
       const key = `session:${id}`;
+
       const resp = await fetch(`${KV_URL}/get/${encodeURIComponent(key)}`, {
         headers: { Authorization: `Bearer ${KV_TOKEN}` }
-      });
-      const body = await resp.json().catch(()=>null);
-      exists = body && body.result != null;
-      attempts++;
+      }).then(r => r.json()).catch(() => null);
+
+      exists = resp && resp.result != null;
+      tries++;
     }
     if (exists) return res.status(500).json({ error: 'Could not create unique ID, try again' });
 
-    // --- 2) KV save ---
-    const sessionKey = `session:${id}`;
     const now = new Date().toISOString();
     const doc = {
       id,
       name: slug,
-      email,          // tároljuk, de kliensnek nem adjuk vissza
+      email,               // szerver oldalon tároljuk
       createdAt: now,
       consentAt: now,
       progress: 0,
@@ -65,7 +62,9 @@ export default async function handler(req, res) {
       ratings: {}
     };
 
-    const setResp = await fetch(`${KV_URL}/set/${encodeURIComponent(sessionKey)}`, {
+    // 2) mentés KV-be
+    const setKey = `session:${id}`;
+    const setResp = await fetch(`${KV_URL}/set/${encodeURIComponent(setKey)}`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${KV_TOKEN}`,
@@ -78,57 +77,42 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: `KV error ${setResp.status}: ${t}` });
     }
 
-    // --- 3) URL ---
+    // 3) URL összerakása
     const sessionUrl = `${SITE_BASE_URL}/session/${id}`;
 
-    // --- 4) Email (best-effort; hiba esetén nem állítjuk meg a redirectet) ---
+    // 4) Email küldés (best-effort)
     if (RESEND_API_KEY && EMAIL_FROM) {
-      const emailHtml = `
+      const html = `
         <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.5">
-          <h2 style="margin:0 0 8px 0">Your TicketDrop session link</h2>
-          <p style="margin:0 0 12px 0">Hi ${name},</p>
-          <p style="margin:0 0 12px 0">
-            Your personal link for the 500 punk/hardcore journey:
-            <br>
+          <h2 style="margin:0 0 8px">Your TicketDrop session link</h2>
+          <p style="margin:0 0 12px">Hi ${name},</p>
+          <p style="margin:0 0 12px">
+            Your personal link:<br>
             <a href="${sessionUrl}" style="color:#111;font-weight:600">${sessionUrl}</a>
           </p>
-          <p style="margin:0 0 16px 0;font-size:14px;color:#444">
+          <p style="margin:0 0 16px;font-size:13px;color:#555">
             Keep this email. Anyone with the link can access your session.
-          </p>
-          <hr style="border:none;border-top:1px solid #eee;margin:16px 0"/>
-          <p style="margin:0;font-size:12px;color:#666">
-            You received this because you created a session at ticketdrop.hu.
-            To request deletion, visit the Privacy page or reply to this email.
           </p>
         </div>
       `;
-
       try {
-        const send = await fetch('https://api.resend.com/emails', {
+        const sent = await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${RESEND_API_KEY}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            from: EMAIL_FROM,
-            to: email,
-            subject: 'Your TicketDrop session link',
-            html: emailHtml
-          })
+          body: JSON.stringify({ from: EMAIL_FROM, to: email, subject: 'Your TicketDrop link', html })
         });
-
-        if (!send.ok) {
-          const txt = await send.text();
-          console.warn('Resend error:', send.status, txt);
-          // nem dobunk hibát — a redirect akkor is megy tovább
-        }
-      } catch (err) {
-        console.warn('Resend exception:', err);
+        if (!sent.ok) console.warn('Resend error:', sent.status, await sent.text());
+      } catch (e) {
+        console.warn('Resend exception:', e);
       }
+    } else {
+      console.warn('Email not fully configured (RESEND_API_KEY / EMAIL_FROM missing).');
     }
 
-    // --- 5) Válasz a kliensnek (redirecthez) ---
+    // 5) válasz a kliensnek
     return res.status(200).json({ ok: true, id, url: sessionUrl });
 
   } catch (e) {
