@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Your session | TicketDrop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white min-h-screen">
+  <main class="max-w-2xl mx-auto px-6 py-10">
+    <h1 class="text-3xl font-extrabold mb-2">Your session</h1>
+    <p class="text-slate-300 mb-6">This is a placeholder page. We’re just confirming routing and the session ID.</p>
+
+    <div class="bg-black border border-white/15 rounded-xl p-5">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <div class="text-sm text-slate-400">Session ID</div>
+          <div id="sid" class="text-xl font-bold">—</div>
+        </div>
+        <button id="copy" class="px-3 py-2 bg-white text-black rounded-lg font-semibold">
+          Copy link
+        </button>
+      </div>
+
+      <div class="mt-6">
+        <div class="text-sm text-slate-400 mb-1">Local notes (demo)</div>
+        <textarea id="notes" class="w-full h-28 bg-black border border-white/20 rounded-md p-2 text-sm"
+                  placeholder="These notes are saved to your browser only…"></textarea>
+        <div class="text-xs text-slate-400 mt-1" id="saved">Not saved</div>
+      </div>
+    </div>
+
+    <a href="/" class="inline-block mt-6 underline">← Back to landing</a>
+  </main>
+
+  <script>
+    // 1) session ID kiolvasása az URL-ből
+    const parts = location.pathname.split('/').filter(Boolean); // ["session","buda-4fg7q"]
+    const sessionId = parts[1] || 'UNKNOWN';
+    const sidEl = document.getElementById('sid');
+    sidEl.textContent = sessionId;
+
+    // 2) "Copy link" gomb
+    document.getElementById('copy').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(location.href);
+        const original = document.getElementById('copy').textContent;
+        document.getElementById('copy').textContent = 'Copied!';
+        setTimeout(()=>document.getElementById('copy').textContent = original, 1200);
+      } catch (e) {
+        alert('Copy failed. You can copy the URL from the address bar.');
+      }
+    });
+
+    // 3) helyi notes demo (később KV-be megy majd)
+    const notesKey = `notes:${sessionId}`;
+    const notesEl = document.getElementById('notes');
+    const savedEl = document.getElementById('saved');
+
+    // betöltéskor visszatöltjük
+    notesEl.value = localStorage.getItem(notesKey) || '';
+
+    // inputnál mentünk
+    let t;
+    notesEl.addEventListener('input', () => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        localStorage.setItem(notesKey, notesEl.value);
+        savedEl.textContent = 'Saved locally';
+        setTimeout(()=> savedEl.textContent = 'Not saved', 1500);
+      }, 300);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Start your journey | TicketDrop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white min-h-screen flex items-center">
+  <main class="max-w-lg mx-auto w-full px-6 py-10">
+    <h1 class="text-3xl font-extrabold mb-4">Start your journey</h1>
+
+    <p class="text-slate-200 mb-4">
+      Create a personal link to your 500-album journey. You’ll get a unique URL you can bookmark.
+    </p>
+
+    <div class="bg-black border border-white/15 rounded-xl p-5">
+      <label class="block text-sm mb-2">Public name (goes into your link)</label>
+      <input id="name" class="w-full px-3 py-2 bg-black border border-white/25 rounded-lg"
+             placeholder="e.g. buda" maxlength="32" />
+
+      <label class="block text-sm mt-4 mb-2">Email (we’ll email your link later)</label>
+      <input id="email" type="email" class="w-full px-3 py-2 bg-black border border-white/25 rounded-lg"
+             placeholder="you@example.com" />
+
+      <label class="flex items-start gap-2 mt-4 text-sm">
+        <input id="consent" type="checkbox" class="mt-1" />
+        <span>I agree to the <a class="underline" href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+      </label>
+
+      <button id="go" class="mt-5 w-full bg-white text-black font-extrabold rounded-xl px-4 py-3 uppercase tracking-wide">
+        Generate my link
+      </button>
+
+      <p id="msg" class="text-sm text-slate-300 mt-3"></p>
+    </div>
+  </main>
+
+  <script>
+    const el = (id)=>document.getElementById(id);
+    el('go').addEventListener('click', async ()=>{
+      const name = el('name').value.trim();
+      const email = el('email').value.trim();
+      const consent = el('consent').checked;
+      el('msg').textContent = '';
+
+      if (!name || !/^[a-z0-9-_.]{2,32}$/i.test(name)) {
+        el('msg').textContent = 'Please enter a simple name (letters/numbers/dash/underscore, 2–32 chars).';
+        return;
+      }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        el('msg').textContent = 'Please enter a valid email.';
+        return;
+      }
+      if (!consent) {
+        el('msg').textContent = 'Please accept the Privacy Policy to continue.';
+        return;
+      }
+
+      el('go').disabled = true; el('go').textContent = 'Working...';
+
+      try {
+        const r = await fetch('/api/create-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, consent: true })
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data?.error || 'Failed to create session');
+
+        // átirányítás a kész linkre
+        window.location.href = data.url;
+      } catch (e) {
+        el('msg').textContent = String(e.message || e);
+      } finally {
+        el('go').disabled = false; el('go').textContent = 'Generate my link';
+      }
+    });
+  </script>
+</body>
+</html>
