@@ -6,30 +6,43 @@
   <title>500 Punk/Hardcore albums</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body{ background:url('./assets/background.png') no-repeat center top; background-size:cover; }
-    header span{ display:inline-block; background:black; padding:2px 6px; box-decoration-break:clone; -webkit-box-decoration-break:clone; }
-    .card{ border-radius:1rem; background:#000; color:#fff; border:1px solid rgba(255,255,255,.18); box-shadow:0 16px 36px rgba(0,0,0,.7); }
-    .btn-white{ display:inline-block; background:#fff; color:#000; font-weight:700; padding:.7rem 1rem; border-radius:.9rem; box-shadow:0 6px 16px rgba(0,0,0,.35); }
+    body{ background:url('./assets/background.png') no-repeat center top; background-size:cover; color:#fff; }
+    /* HERO per-line black background only under text */
+    .hero-line{
+      display:inline;                 /* tényleg csak a szöveg szélessége */
+      background:#000;                /* fekete téglalap */
+      padding:0 .45rem;               /* kis oldalpárna, felül/alul nincs */
+      box-decoration-break:clone;     /* több sorban is doboz marad */
+      -webkit-box-decoration-break:clone;
+      line-height:1.6;                /* kényelmes sortáv */
+    }
+    /* Kártyák */
+    .card{ border-radius:1rem; background:#000; border:1px solid rgba(255,255,255,.18); box-shadow:0 16px 36px rgba(0,0,0,.7); }
+    .btn-white{ display:inline-block; background:#fff; color:#000; font-weight:700; padding:.7rem 1rem; border-radius:.9rem; box-shadow:0 6px 16px rgba(0,0,0,.35); text-align:center; }
     .btn-white:hover{ background:#f2f2f2 }
     .progress-track{ height:8px; background:rgba(255,255,255,.18); border-radius:999px; overflow:hidden }
     .progress-fill{ height:8px; background:#fff; width:30% }
+    .cover-box{ width:120px; height:120px; background:#1f2937; border-radius:.5rem; border:1px solid rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; font-size:10px; text-transform:uppercase; letter-spacing:.08em; }
+    details summary{ cursor:pointer; list-style:none; }
+    details summary::-webkit-details-marker{ display:none; }
+    details summary:after{ content:"▼"; font-size:.8rem; margin-left:.5rem; opacity:.7; }
   </style>
 </head>
-<body class="text-white">
+<body>
   <!-- HERO -->
   <header class="min-h-[70vh] flex items-center">
     <div class="max-w-5xl mx-auto px-6 w-full">
       <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
-        <span>500 Punk/Hardcore albums</span><br/>
-        <span>you need to listen…</span>
+        <span class="hero-line">500 Punk/Hardcore albums</span><br/>
+        <span class="hero-line">you need to listen…</span>
       </h1>
-      <p class="text-lg md:text-xl space-y-1">
-        <span>Feeling like a poser sometimes? You show up at shows, but half the time you have no clue what’s on everyone else’s T-shirt.</span><br/>
-        <span>You nod along when someone says “oh, that record is legendary”, but secretly you’ve never even heard it.</span><br/>
-        <span>You can’t name three Negative Approach songs without peeking at Discogs.</span><br/>
-        <span>And when someone drops <em>Siege</em> or <em>Totalitär</em> in conversation, you just change the subject.</span><br/>
-        <span>Don’t worry — we’ve all been there. This project gives you one essential album every weekday (Mon–Fri), with cover art, a short story, and links to actually listen.</span><br/>
-        <span>By the end you’ll know your <em>Out of Step</em> from your <em>Out of Vogue</em>, and you’ll never feel lost in the pit again.</span>
+      <p class="text-lg md:text-xl">
+        <span class="hero-line">Feeling like a poser sometimes? You show up at shows, but half the time you have no clue what’s on everyone else’s T-shirt.</span><br/>
+        <span class="hero-line">You nod along when someone says “oh, that record is legendary”, but secretly you’ve never even heard it.</span><br/>
+        <span class="hero-line">You can’t name three Negative Approach songs without peeking at Discogs.</span><br/>
+        <span class="hero-line">And when someone drops <em>Siege</em> or <em>Totalitär</em> in conversation, you just change the subject.</span><br/>
+        <span class="hero-line">Don’t worry — we’ve all been there. This project gives you one essential album every weekday (Mon–Fri), with cover art, a short story, and links to actually listen.</span><br/>
+        <span class="hero-line">By the end you’ll know your <em>Out of Step</em> from your <em>Out of Vogue</em>, and you’ll never feel lost in the pit again.</span>
       </p>
       <div class="mt-6 flex flex-wrap gap-3">
         <a href="#start" class="btn-white">START YOUR JOURNEY</a>
@@ -66,8 +79,7 @@
       <!-- Minor Threat -->
       <article class="card p-6">
         <div class="grid grid-cols-[120px,1fr] gap-5">
-          <div class="w-[120px] h-[120px] bg-slate-800 rounded-md border border-white/20 flex items-center justify-center text-[10px] uppercase tracking-wide"
-               data-cover-mt>Cover</div>
+          <div class="cover-box" data-cover-mt>Cover</div>
           <div>
             <h3 class="text-xl font-extrabold">Minor Threat — Out of Step (1983)</h3>
             <p class="mt-2 italic text-slate-200">
@@ -75,15 +87,15 @@
             </p>
             <p class="text-xs mt-1">
               — <a href="https://www.loudersound.com/features/minor-threat-out-of-step-hardcore-punk-as-a-force-for-good" target="_blank" rel="noopener" class="underline">
-                Louder: *Minor Threat – Out of Step: Hardcore punk as a force for good*
+                Louder: <em>Minor Threat – Out of Step: Hardcore punk as a force for good</em>
               </a>
             </p>
 
             <!-- OUTBOUND LINKS -->
             <div class="mt-4 space-y-2">
-              <a id="mtSpotify" class="btn-white w-full text-center">Open on Spotify</a>
-              <a id="mtYt" class="btn-white w-full text-center">Open on YT Music</a>
-              <a id="mtDiscogs" class="btn-white w-full text-center">Open on Discogs</a>
+              <a id="mtSpotify" class="btn-white w-full">Open on Spotify</a>
+              <a id="mtYt" class="btn-white w-full">Open on YT Music</a>
+              <a id="mtDiscogs" class="btn-white w-full">Open on Discogs</a>
             </div>
 
             <!-- SESSION ACTIONS -->
@@ -98,9 +110,17 @@
               </div>
             </div>
 
-            <a href="https://www.loudersound.com/features/minor-threat-out-of-step-hardcore-punk-as-a-force-for-good"
-               target="_blank" rel="noopener"
-               class="mt-3 inline-block text-sm underline">Read full review →</a>
+            <!-- OPTIONALS -->
+            <details class="mt-4">
+              <summary class="text-sm font-bold">Notes & rating</summary>
+              <textarea class="mt-2 w-full h-24 bg-black/70 border border-white/20 rounded-md p-2 text-sm" placeholder="Write your thoughts…"></textarea>
+              <div class="mt-2 text-sm">Rating: ☆ ☆ ☆ ☆ ☆</div>
+            </details>
+
+            <details class="mt-2">
+              <summary class="text-sm font-bold">Read more</summary>
+              <p class="mt-2 text-sm text-slate-200">Room for a longer excerpt or multiple source links (e.g., MRR issue ref, Punknews, AllMusic). Always with proper attribution.</p>
+            </details>
           </div>
         </div>
       </article>
@@ -108,8 +128,7 @@
       <!-- Discharge -->
       <article class="card p-6">
         <div class="grid grid-cols-[120px,1fr] gap-5">
-          <div class="w-[120px] h-[120px] bg-slate-800 rounded-md border border-white/20 flex items-center justify-center text-[10px] uppercase tracking-wide"
-               data-cover-dc>Cover</div>
+          <div class="cover-box" data-cover-dc>Cover</div>
           <div>
             <h3 class="text-xl font-extrabold">Discharge — Hear Nothing See Nothing Say Nothing (1982)</h3>
             <p class="mt-2 italic text-slate-200">
@@ -117,14 +136,14 @@
             </p>
             <p class="text-xs mt-1">
               — <a href="https://www.loudersound.com/features/discharge-hear-nothing-see-nothing-say-nothing-album-story" target="_blank" rel="noopener" class="underline">
-                Louder: *Discharge – Hear Nothing, See Nothing, Say Nothing: the story of a game-changer*
+                Louder: <em>Discharge – Hear Nothing, See Nothing, Say Nothing: the story of a game-changer</em>
               </a>
             </p>
 
             <div class="mt-4 space-y-2">
-              <a id="dcSpotify" class="btn-white w-full text-center">Open on Spotify</a>
-              <a id="dcYt" class="btn-white w-full text-center">Open on YT Music</a>
-              <a id="dcDiscogs" class="btn-white w-full text-center">Open on Discogs</a>
+              <a id="dcSpotify" class="btn-white w-full">Open on Spotify</a>
+              <a id="dcYt" class="btn-white w-full">Open on YT Music</a>
+              <a id="dcDiscogs" class="btn-white w-full">Open on Discogs</a>
             </div>
 
             <div class="mt-4 p-3 bg-black/60 rounded-lg border border-white/15">
@@ -138,9 +157,16 @@
               </div>
             </div>
 
-            <a href="https://www.loudersound.com/features/discharge-hear-nothing-see-nothing-say-nothing-album-story"
-               target="_blank" rel="noopener"
-               class="mt-3 inline-block text-sm underline">Read full review →</a>
+            <details class="mt-4">
+              <summary class="text-sm font-bold">Notes & rating</summary>
+              <textarea class="mt-2 w-full h-24 bg-black/70 border border-white/20 rounded-md p-2 text-sm" placeholder="Write your thoughts…"></textarea>
+              <div class="mt-2 text-sm">Rating: ☆ ☆ ☆ ☆ ☆</div>
+            </details>
+
+            <details class="mt-2">
+              <summary class="text-sm font-bold">Read more</summary>
+              <p class="mt-2 text-sm text-slate-200">Longer background text, review excerpts (<= ~25 words each) with links to sources.</p>
+            </details>
           </div>
         </div>
       </article>
