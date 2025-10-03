@@ -1,0 +1,86 @@
+// api/create-session.js
+export default async function handler(req, res) {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  try {
+    const { name, email, consent } = req.body || {};
+    if (!name || !/^[a-z0-9-_.]{2,32}$/i.test(name)) {
+      return res.status(400).json({ error: 'Invalid name' });
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: 'Invalid email' });
+    }
+    if (!consent) {
+      return res.status(400).json({ error: 'Consent required' });
+    }
+
+    const SITE_BASE_URL = process.env.SITE_BASE_URL || `https://${req.headers.host}`;
+    const KV_URL   = process.env.UPSTASH_REDIS_REST_URL;
+    const KV_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+    if (!KV_URL || !KV_TOKEN) {
+      return res.status(500).json({ error: 'KV not configured' });
+    }
+
+    // 1) slug + random token
+    const slug = name.toLowerCase()
+      .replace(/[^a-z0-9-_.]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^[-_.]+|[-_.]+$/g, '')
+      .slice(0, 32);
+
+    // Ütközés elkerüléséhez: max 5 próbálkozás
+    let id, exists = true, attempts = 0;
+    while (exists && attempts < 5) {
+      const token = Math.random().toString(36).slice(2, 8); // 6 chars
+      id = `${slug}-${token}`;
+      const key = `session:${id}`;
+      const resp = await fetch(`${KV_URL}/get/${encodeURIComponent(key)}`, {
+        headers: { Authorization: `Bearer ${KV_TOKEN}` }
+      });
+      const body = await resp.json().catch(()=>null);
+      exists = body && body.result != null;
+      attempts++;
+    }
+    if (exists) {
+      return res.status(500).json({ error: 'Could not create unique ID, try again' });
+    }
+
+    const sessionKey = `session:${id}`;
+    const now = new Date().toISOString();
+    const doc = {
+      id,
+      name: slug,
+      email,
+      createdAt: now,
+      consentAt: now,
+      // kezdeti állapot – később bővítjük
+      progress: 0,
+      listened: [],
+      skipped: [],
+      notes: {},
+      ratings: {}
+    };
+
+    // 2) KV-be mentés (SET)
+    const setResp = await fetch(`${KV_URL}/set/${encodeURIComponent(sessionKey)}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${KV_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(doc)
+    });
+    if (!setResp.ok) {
+      const t = await setResp.text();
+      return res.status(500).json({ error: `KV error ${setResp.status}: ${t}` });
+    }
+
+    // 3) URL vissza
+    const url = `${SITE_BASE_URL}/session/${id}`;
+    return res.status(200).json({ ok: true, id, url });
+
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: String(e.message || e) });
+  }
+}

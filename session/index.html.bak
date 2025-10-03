@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Your session</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-black text-white font-sans">
+  <div class="max-w-2xl mx-auto py-12 px-4">
+
+    <!-- Hero title -->
+    <h1 class="text-3xl font-bold mb-4">Your session</h1>
+    <p class="mb-6 text-gray-300">This is a placeholder page. We’re just confirming routing and the session ID.</p>
+
+    <!-- Session card -->
+    <div class="bg-black border border-gray-700 rounded-lg p-6">
+      <p class="text-sm text-gray-400">Session ID</p>
+      <p id="sid" class="text-lg font-bold mb-3">UNKNOWN</p>
+
+      <!-- Copy link -->
+      <button id="copyBtn" class="bg-white text-black px-3 py-1 rounded mb-4">Copy link</button>
+
+      <!-- Local notes (demo only, just stored in browser memory) -->
+      <label for="notes" class="block text-sm text-gray-400">Local notes (demo)</label>
+      <textarea id="notes" rows="4"
+        class="w-full bg-black border border-gray-600 rounded p-2 text-sm mb-2"
+        placeholder="These notes are saved to your browser only..."></textarea>
+      <p id="saveStatus" class="text-xs text-gray-500">Not saved</p>
+    </div>
+
+    <!-- Back link -->
+    <p class="mt-6">
+      <a href="/" class="text-blue-400 underline">&larr; Back to landing</a>
+    </p>
+  </div>
+
+  <script>
+    // Extract session ID from URL (/session/<id>)
+    const parts = location.pathname.split('/').filter(Boolean);
+    const sessionId = parts[1] || 'UNKNOWN';
+    document.getElementById('sid').textContent = sessionId;
+
+    // Fetch session details from our API
+    async function loadSession() {
+      if (sessionId === 'UNKNOWN') return;
+      try {
+        const r = await fetch(`/api/session/${encodeURIComponent(sessionId)}`);
+        const data = await r.json();
+        if (!r.ok) throw new Error(data?.error || 'Failed to load session');
+
+        // Show info from KV (name + createdAt)
+        const info = document.createElement('p');
+        info.className = 'text-sm text-slate-300 mt-3';
+        info.textContent = `Hello, ${data.session.name} — created at ${new Date(data.session.createdAt).toLocaleString()}`;
+        document.querySelector('.bg-black.border').appendChild(info);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    loadSession();
+
+    // Copy link button
+    document.getElementById('copyBtn').addEventListener('click', () => {
+      const url = location.href;
+      navigator.clipboard.writeText(url).then(() => {
+        alert("Link copied to clipboard: " + url);
+      });
+    });
+
+    // Local notes save to browser memory
+    const notesEl = document.getElementById('notes');
+    const saveStatusEl = document.getElementById('saveStatus');
+    notesEl.addEventListener('input', () => {
+      localStorage.setItem(`notes:${sessionId}`, notesEl.value);
+      saveStatusEl.textContent = "Saved locally";
+    });
+
+    // Load saved notes if present
+    const saved = localStorage.getItem(`notes:${sessionId}`);
+    if (saved) {
+      notesEl.value = saved;
+      saveStatusEl.textContent = "Loaded from localStorage";
+    }
+  </script>
+</body>
+</html>
