@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ticketdrop – Session</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif; background:#0a0a0a; color:#e6e6e6; }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 32px 20px; }
+    h1 { font-size: 28px; margin: 0 0 6px; }
+    p.sub { color:#bdbdbd; margin: 0 0 20px; }
+    .card { background:#111; border:1px solid #222; border-radius: 14px; padding: 16px; }
+    .grid { display:grid; gap:16px; }
+    .grid.cols-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .kpi { background:#0e0e0e; border:1px solid #2a2a2a; border-radius: 10px; padding:12px; }
+    .kpi .label { font-size:12px; color:#bdbdbd; }
+    .kpi .value { font-size:24px; font-weight:700; margin-top:4px; }
+    .bar { height: 10px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius: 999px; overflow: hidden; }
+    .bar > div { height:100%; background:#e6e6e6; width:0%; transition: width .2s ease; }
+    button {
+      appearance:none; border:1px solid #2a2a2a; background:#161616; color:#e6e6e6;
+      padding:8px 12px; border-radius:10px; cursor:pointer; font-weight:600;
+    }
+    .row { display:grid; gap:8px; }
+    textarea { width:100%; min-height:120px; padding:10px 12px; border:1px solid #2a2a2a; border-radius:10px; background:#0e0e0e; color:#e6e6e6; }
+    .muted { color:#bdbdbd; font-size: 14px; }
+    .idpill { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background:#0e0e0e; border:1px solid #2a2a2a; padding:6px 10px; border-radius: 999px; }
+    .head { display:flex; align-items:center; justify-content: space-between; gap:12px; }
+    .flex { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    a { color:#9ecbff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .status { font-size: 14px; }
+    .status.error { color:#ff6b6b; }
+    .status.ok { color:#7bd88f; }
+    pre { white-space: pre-wrap; word-break: break-word; background:#0e0e0e; border:1px solid #2a2a2a; border-radius:10px; padding:10px; font-size:12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Your session</h1>
+    <p class="sub">Placeholder page to confirm routing and show the stored session state.</p>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="head">
+        <div class="flex">
+          <span>Session ID</span>
+          <span id="sid" class="idpill">—</span>
+          <button id="copyBtn" title="Copy link">Copy link</button>
+        </div>
+        <div class="status" id="status">Loading…</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="flex" style="justify-content:space-between; margin-bottom:10px;">
+        <strong>Session state</strong>
+        <small id="progressLabel" class="muted">0 / 500</small>
+      </div>
+      <div class="bar" aria-label="Progress">
+        <div id="bar"></div>
+      </div>
+
+      <div class="grid cols-3" style="margin-top:12px">
+        <div class="kpi">
+          <div class="label">Listened</div>
+          <div id="kpi-listened" class="value">0</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Skipped</div>
+          <div id="kpi-skipped" class="value">0</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Notes / Ratings</div>
+          <div class="value"><span id="kpi-notes">0</span> / <span id="kpi-ratings">0</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="row">
+        <strong>Local notes (demo)</strong>
+        <textarea id="localNotes" placeholder="These notes are saved to your browser only…"></textarea>
+        <div class="flex" style="justify-content:space-between;">
+          <span id="localState" class="muted">Not saved</span>
+          <div class="flex">
+            <button id="saveLocal">Save locally</button>
+            <button id="clearLocal">Clear</button>
+            <button id="refreshBtn">Refresh session</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p><a href="/">← Back to landing</a></p>
+
+    <details style="margin-top:16px">
+      <summary>Raw session JSON</summary>
+      <pre id="raw">—</pre>
+    </details>
+  </div>
+
+  <script>
+    const qs = new URLSearchParams(location.search);
+    const id = qs.get('id') || '';
+    const sidEl = document.getElementById('sid');
+    const copyBtn = document.getElementById('copyBtn');
+    const statusEl = document.getElementById('status');
+    const bar = document.getElementById('bar');
+    const progressLabel = document.getElementById('progressLabel');
+    const kListened = document.getElementById('kpi-listened');
+    const kSkipped = document.getElementById('kpi-skipped');
+    const kNotes = document.getElementById('kpi-notes');
+    const kRatings = document.getElementById('kpi-ratings');
+    const rawEl = document.getElementById('raw');
+    const localNotes = document.getElementById('localNotes');
+    const localState = document.getElementById('localState');
+
+    sidEl.textContent = id || '—';
+
+    function se

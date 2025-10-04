@@ -1,79 +1,114 @@
 <!doctype html>
-<html lang="en">
+<html lang="hu">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Start your journey | TicketDrop</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ticketdrop – Start</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif; background:#0a0a0a; color:#e6e6e6; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 32px 20px; }
+    h1 { font-size: 28px; margin: 0 0 16px; }
+    p.lead { color:#bdbdbd; margin: 0 0 24px; }
+    form { display: grid; gap: 16px; background: #111; border: 1px solid #222; border-radius: 12px; padding: 20px; }
+    label { font-weight: 600; font-size: 14px; }
+    input[type="text"], input[type="email"] {
+      width: 100%; padding: 10px 12px; border:1px solid #2a2a2a; border-radius: 10px; background:#0e0e0e; color:#e6e6e6;
+    }
+    .row { display: grid; gap: 8px; }
+    .consent { display: flex; gap: 10px; align-items: start; font-size: 14px; color:#cfcfcf; }
+    .consent input { transform: translateY(3px); }
+    .actions { display: flex; gap: 12px; align-items: center; }
+    button {
+      appearance: none; border: 1px solid #2a2a2a; background: #161616; color: #e6e6e6;
+      padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 600;
+    }
+    button[disabled] { opacity: .6; cursor: not-allowed; }
+    .msg { font-size: 14px; }
+    .msg.error { color:#ff6b6b; }
+    .msg.ok { color:#7bd88f; }
+    a { color:#9ecbff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
 </head>
-<body class="bg-black text-white min-h-screen flex items-center">
-  <main class="max-w-lg mx-auto w-full px-6 py-10">
-    <h1 class="text-3xl font-extrabold mb-4">Start your journey</h1>
+<body>
+  <div class="wrap">
+    <h1>Start your session</h1>
+    <p class="lead">Add meg a neved és az emailed. Létrehozzuk a sessiont, és kapsz egy visszaigazoló linket.</p>
 
-    <p class="text-slate-200 mb-4">
-      Create a personal link to your 500-album journey. You’ll get a unique URL you can bookmark.
-    </p>
+    <form id="startForm" novalidate>
+      <div class="row">
+        <label for="name">Public name</label>
+        <input id="name" name="name" type="text" placeholder="pl. Gabi" required />
+      </div>
 
-    <div class="bg-black border border-white/15 rounded-xl p-5">
-      <label class="block text-sm mb-2">Public name (goes into your link)</label>
-      <input id="name" class="w-full px-3 py-2 bg-black border border-white/25 rounded-lg"
-             placeholder="e.g. buda" maxlength="32" />
+      <div class="row">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" placeholder="te@pelda.hu" required />
+      </div>
 
-      <label class="block text-sm mt-4 mb-2">Email (we’ll email your link later)</label>
-      <input id="email" type="email" class="w-full px-3 py-2 bg-black border border-white/25 rounded-lg"
-             placeholder="you@example.com" />
+      <div class="consent">
+        <input id="consent" name="consent" type="checkbox" required />
+        <label for="consent">
+          Elfogadom az adatkezelést. Röviden: a nevedet és emailedet csak a session működéséhez használjuk, nem adjuk tovább.
+        </label>
+      </div>
 
-      <label class="flex items-start gap-2 mt-4 text-sm">
-        <input id="consent" type="checkbox" class="mt-1" />
-        <span>I agree to the <a class="underline" href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span>
-      </label>
+      <div class="actions">
+        <button id="submitBtn" type="submit">Create session</button>
+        <span id="status" class="msg" aria-live="polite"></span>
+      </div>
+    </form>
 
-      <button id="go" class="mt-5 w-full bg-white text-black font-extrabold rounded-xl px-4 py-3 uppercase tracking-wide">
-        Generate my link
-      </button>
-
-      <p id="msg" class="text-sm text-slate-300 mt-3"></p>
-    </div>
-  </main>
+    <p style="margin-top:24px"><a href="/">← Vissza a landingre</a></p>
+  </div>
 
   <script>
-    const el = (id)=>document.getElementById(id);
-    el('go').addEventListener('click', async ()=>{
-      const name = el('name').value.trim();
-      const email = el('email').value.trim();
-      const consent = el('consent').checked;
-      el('msg').textContent = '';
+    const form = document.getElementById('startForm');
+    const btn = document.getElementById('submitBtn');
+    const statusEl = document.getElementById('status');
 
-      if (!name || !/^[a-z0-9-_.]{2,32}$/i.test(name)) {
-        el('msg').textContent = 'Please enter a simple name (letters/numbers/dash/underscore, 2–32 chars).';
-        return;
-      }
-      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        el('msg').textContent = 'Please enter a valid email.';
-        return;
-      }
-      if (!consent) {
-        el('msg').textContent = 'Please accept the Privacy Policy to continue.';
-        return;
-      }
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      statusEl.textContent = '';
+      statusEl.className = 'msg';
+      btn.disabled = true;
 
-      el('go').disabled = true; el('go').textContent = 'Working...';
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const consent = document.getElementById('consent').checked;
+
+      if (!name || !email || !consent) {
+        statusEl.textContent = 'Hiányzó mezők.';
+        statusEl.classList.add('error');
+        btn.disabled = false;
+        return;
+      }
 
       try {
         const r = await fetch('/api/create-session', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, consent: true })
+          body: JSON.stringify({ name, email, consent })
         });
-        const data = await r.json();
-        if (!r.ok) throw new Error(data?.error || 'Failed to create session');
 
-        // átirányítás a kész linkre
-        window.location.href = data.url;
-      } catch (e) {
-        el('msg').textContent = String(e.message || e);
+        const data = await r.json().catch(() => ({}));
+
+        if (!r.ok || !data?.ok) {
+          const detail = data?.detail ? ` (${data.detail.slice(0, 160)})` : '';
+          throw new Error(data?.error || `Sikertelen kérés${detail}`);
+        }
+
+        statusEl.textContent = 'Session létrehozva, átirányítás…';
+        statusEl.classList.add('ok');
+
+        // Redirect a visszaadott URL-re (pl. /session?id=<id>)
+        location.href = data.url || `/session?id=${encodeURIComponent(data.id)}`;
+      } catch (err) {
+        statusEl.textContent = String(err.message || err);
+        statusEl.classList.add('error');
       } finally {
-        el('go').disabled = false; el('go').textContent = 'Generate my link';
+        btn.disabled = false;
       }
     });
   </script>

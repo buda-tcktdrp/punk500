@@ -1,147 +1,195 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="hu">
 <head>
-  <meta charset="UTF-8" />
-  <title>Your session</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ticketdrop – Session</title>
   <style>
-    .muted{color:#9ca3af}
-    .card{background:#000;border:1px solid rgba(255,255,255,.15);border-radius:.75rem;padding:1.25rem}
-    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    :root { color-scheme: dark; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif; background:#0a0a0a; color:#e6e6e6; }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 32px 20px; }
+    h1 { font-size: 28px; margin: 0 0 6px; }
+    p.sub { color:#bdbdbd; margin: 0 0 20px; }
+    .card { background:#111; border:1px solid #222; border-radius: 14px; padding: 16px; }
+    .grid { display:grid; gap:16px; }
+    .grid.cols-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .kpi { background:#0e0e0e; border:1px solid #2a2a2a; border-radius: 10px; padding:12px; }
+    .kpi .label { font-size:12px; color:#bdbdbd; }
+    .kpi .value { font-size:24px; font-weight:700; margin-top:4px; }
+    .bar { height: 10px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius: 999px; overflow: hidden; }
+    .bar > div { height:100%; background:#e6e6e6; width:0%; transition: width .2s ease; }
+    button {
+      appearance:none; border:1px solid #2a2a2a; background:#161616; color:#e6e6e6;
+      padding:8px 12px; border-radius:10px; cursor:pointer; font-weight:600;
+    }
+    .row { display:grid; gap:8px; }
+    textarea { width:100%; min-height:120px; padding:10px 12px; border:1px solid #2a2a2a; border-radius:10px; background:#0e0e0e; color:#e6e6e6; }
+    .muted { color:#bdbdbd; font-size: 14px; }
+    .idpill { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background:#0e0e0e; border:1px solid #2a2a2a; padding:6px 10px; border-radius: 999px; }
+    .head { display:flex; align-items:center; justify-content: space-between; gap:12px; }
+    .flex { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    a { color:#9ecbff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .status { font-size: 14px; }
+    .status.error { color:#ff6b6b; }
+    .status.ok { color:#7bd88f; }
+    pre { white-space: pre-wrap; word-break: break-word; background:#0e0e0e; border:1px solid #2a2a2a; border-radius:10px; padding:10px; font-size:12px; }
   </style>
 </head>
-<body class="bg-black text-white font-sans">
-  <div class="max-w-3xl mx-auto py-12 px-4">
+<body>
+  <div class="wrap">
+    <h1>Your session</h1>
+    <p class="sub">Placeholder page to confirm routing and show the stored session state.</p>
 
-    <h1 class="text-3xl font-extrabold mb-2">Your session</h1>
-    <p class="mb-6 muted">Placeholder page to confirm routing and show the stored session state.</p>
-
-    <div class="card">
-      <div class="flex items-center justify-between">
-        <div>
-          <div class="text-sm muted">Session ID</div>
-          <div id="sid" class="text-xl font-bold mono">—</div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="head">
+        <div class="flex">
+          <span>Session ID</span>
+          <span id="sid" class="idpill">—</span>
+          <button id="copyBtn" title="Copy link">Copy link</button>
         </div>
-        <button id="copyBtn" class="bg-white text-black px-3 py-1 rounded font-semibold">Copy link</button>
+        <div class="status" id="status">Loading…</div>
       </div>
-      <div id="basicInfo" class="mt-4 text-sm muted"></div>
     </div>
 
-    <div class="card mt-6">
-      <h2 class="text-lg font-bold mb-3">Session state</h2>
-      <div class="mb-4">
-        <div class="flex items-center justify-between text-sm muted mb-1">
-          <span>Progress</span>
-          <span id="progressText">0 / 500</span>
-        </div>
-        <div class="h-2 bg-white bg-opacity-10 rounded">
-          <div id="progressBar" class="h-2 bg-white rounded" style="width:0%"></div>
-        </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="flex" style="justify-content:space-between; margin-bottom:10px;">
+        <strong>Session state</strong>
+        <small id="progressLabel" class="muted">0 / 500</small>
+      </div>
+      <div class="bar" aria-label="Progress">
+        <div id="bar"></div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-        <div class="bg-white bg-opacity-5 rounded p-3">
-          <div class="muted">Listened</div>
-          <div id="listenedCount" class="text-xl font-extrabold">0</div>
-          <div id="listenedPeek" class="mono text-xs muted mt-1"></div>
+      <div class="grid cols-3" style="margin-top:12px">
+        <div class="kpi">
+          <div class="label">Listened</div>
+          <div id="kpi-listened" class="value">0</div>
         </div>
-        <div class="bg-white bg-opacity-5 rounded p-3">
-          <div class="muted">Skipped</div>
-          <div id="skippedCount" class="text-xl font-extrabold">0</div>
-          <div id="skippedPeek" class="mono text-xs muted mt-1"></div>
+        <div class="kpi">
+          <div class="label">Skipped</div>
+          <div id="kpi-skipped" class="value">0</div>
         </div>
-        <div class="bg-white bg-opacity-5 rounded p-3">
-          <div class="muted">Notes / Ratings</div>
-          <div class="text-xl font-extrabold"><span id="notesCount">0</span> / <span id="ratingsCount">0</span></div>
-          <div class="mono text-xs muted mt-1">(#notes / #ratings)</div>
+        <div class="kpi">
+          <div class="label">Notes / Ratings</div>
+          <div class="value"><span id="kpi-notes">0</span> / <span id="kpi-ratings">0</span></div>
         </div>
       </div>
     </div>
 
-    <div class="card mt-6">
-      <label for="notes" class="block text-sm muted mb-1">Local notes (demo)</label>
-      <textarea id="notes" rows="5" class="w-full bg-black border border-white border-opacity-20 rounded p-2 text-sm" placeholder="These notes are saved to your browser only…"></textarea>
-      <p id="saveStatus" class="text-xs muted mt-1">Not saved</p>
+    <div class="card" style="margin-bottom:16px">
+      <div class="row">
+        <strong>Local notes (demo)</strong>
+        <textarea id="localNotes" placeholder="These notes are saved to your browser only…"></textarea>
+        <div class="flex" style="justify-content:space-between;">
+          <span id="localState" class="muted">Not saved</span>
+          <div class="flex">
+            <button id="saveLocal">Save locally</button>
+            <button id="clearLocal">Clear</button>
+            <button id="refreshBtn">Refresh session</button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <p class="mt-6">
-      <a href="/" class="underline">&larr; Back to landing</a>
-    </p>
+    <p><a href="/">← Back to landing</a></p>
+
+    <details style="margin-top:16px">
+      <summary>Raw session JSON</summary>
+      <pre id="raw">—</pre>
+    </details>
   </div>
 
   <script>
-    const $ = (id)=>document.getElementById(id);
-    const TOTAL_ALBUMS = 500;
+    const qs = new URLSearchParams(location.search);
+    const id = qs.get('id') || '';
+    const sidEl = document.getElementById('sid');
+    const copyBtn = document.getElementById('copyBtn');
+    const statusEl = document.getElementById('status');
+    const bar = document.getElementById('bar');
+    const progressLabel = document.getElementById('progressLabel');
+    const kListened = document.getElementById('kpi-listened');
+    const kSkipped = document.getElementById('kpi-skipped');
+    const kNotes = document.getElementById('kpi-notes');
+    const kRatings = document.getElementById('kpi-ratings');
+    const rawEl = document.getElementById('raw');
+    const localNotes = document.getElementById('localNotes');
+    const localState = document.getElementById('localState');
 
-    // --- ID kiolvasása query param-ból (?id=xxxx)
-    const params = new URLSearchParams(location.search);
-    const sessionId = params.get('id') || 'UNKNOWN';
-    $('sid').textContent = sessionId;
+    sidEl.textContent = id || '—';
 
-    // --- Copy link
-    $('copyBtn').addEventListener('click', async ()=>{
-      try {
-        await navigator.clipboard.writeText(location.href);
-        const old = $('copyBtn').textContent;
-        $('copyBtn').textContent = 'Copied!';
-        setTimeout(()=> $('copyBtn').textContent = old, 1200);
-      } catch { alert('Copy failed. You can copy the URL from the address bar.'); }
-    });
+    function setStatus(msg, type) {
+      statusEl.textContent = msg;
+      statusEl.className = 'status' + (type ? ' ' + type : '');
+    }
 
-    // --- KV-ből betöltés
-    async function loadSession(){
-      if(sessionId === 'UNKNOWN') {
-        $('basicInfo').textContent = 'Missing ?id=… in the URL.';
+    async function load() {
+      if (!id) {
+        setStatus('Hiányzik az id paraméter (?id=...).', 'error');
         return;
       }
-      try{
-        const r = await fetch(`/api/session/${encodeURIComponent(sessionId)}`);
-        const data = await r.json();
-        if(!r.ok) throw new Error(data?.error || 'Failed to load session');
+      setStatus('Loading…');
 
-        const s = data.session || {};
-        $('basicInfo').textContent = `Hello, ${s.name} — created at ${new Date(s.createdAt).toLocaleString()} (consent at ${new Date(s.consentAt).toLocaleString()})`;
+      try {
+        const r = await fetch(`/api/session/${encodeURIComponent(id)}`, { cache: 'no-store' });
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) {
+          const detail = data?.detail ? ` (${String(data.detail).slice(0,160)})` : '';
+          throw new Error(data?.error || `Hiba a betöltés közben${detail}`);
+        }
 
-        const progress = Number(s.progress || 0);
-        const pct = Math.min(100, Math.max(0, (progress / TOTAL_ALBUMS) * 100));
-        $('progressText').textContent = `${progress} / ${TOTAL_ALBUMS}`;
-        $('progressBar').style.width = `${pct}%`;
+        // progress bar (0..100)
+        const pct = Math.max(0, Math.min(100, Number(data.progress ?? 0)));
+        bar.style.width = pct + '%';
+        progressLabel.textContent = `${pct} / 500`;
 
-        const listened = Array.isArray(s.listened) ? s.listened : [];
-        const skipped  = Array.isArray(s.skipped)  ? s.skipped  : [];
-        const notesObj = s.notes  && typeof s.notes  === 'object' ? s.notes  : {};
-        const rateObj  = s.ratings&& typeof s.ratings=== 'object' ? s.ratings: {};
+        kListened.textContent = String(data.listened ?? 0);
+        kSkipped.textContent = String(data.skipped ?? 0);
+        kNotes.textContent = String(data.notes ?? 0);
+        kRatings.textContent = String(data.ratings ?? 0);
 
-        $('listenedCount').textContent = listened.length;
-        $('skippedCount').textContent  = skipped.length;
-        $('notesCount').textContent    = Object.keys(notesObj).length;
-        $('ratingsCount').textContent  = Object.keys(rateObj).length;
+        rawEl.textContent = JSON.stringify(data, null, 2);
+        setStatus('Loaded', 'ok');
 
-        const peek = (arr)=>arr.slice(0,5).join(', ') + (arr.length>5 ? '…' : (arr.length? '' : '—'));
-        $('listenedPeek').textContent = peek(listened);
-        $('skippedPeek').textContent  = peek(skipped);
+        // local notes restore
+        const localKey = `td-local-notes:${id}`;
+        localNotes.value = localStorage.getItem(localKey) || '';
+        localState.textContent = localNotes.value ? 'Saved locally' : 'Not saved';
 
-      }catch(e){
-        console.error(e);
-        $('basicInfo').textContent = 'Failed to load session.';
+      } catch (err) {
+        setStatus(String(err.message || err), 'error');
       }
     }
-    loadSession();
 
-    // --- Local notes (browser)
-    const notesKey = `notes:${sessionId}`;
-    const notesEl = $('notes');
-    const saveEl  = $('saveStatus');
-    notesEl.value = localStorage.getItem(notesKey) || '';
-    let t; notesEl.addEventListener('input', ()=>{
-      clearTimeout(t);
-      t = setTimeout(()=>{
-        localStorage.setItem(notesKey, notesEl.value);
-        saveEl.textContent = 'Saved locally';
-        setTimeout(()=> saveEl.textContent = 'Not saved', 1500);
-      }, 250);
+    document.getElementById('saveLocal').addEventListener('click', () => {
+      if (!id) return;
+      const localKey = `td-local-notes:${id}`;
+      localStorage.setItem(localKey, localNotes.value);
+      localState.textContent = 'Saved locally';
     });
+
+    document.getElementById('clearLocal').addEventListener('click', () => {
+      if (!id) return;
+      const localKey = `td-local-notes:${id}`;
+      localStorage.removeItem(localKey);
+      localNotes.value = '';
+      localState.textContent = 'Not saved';
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', load);
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        const url = new URL(location.href);
+        await navigator.clipboard.writeText(url.toString());
+        setStatus('Link copied', 'ok');
+        setTimeout(() => setStatus('Loaded', 'ok'), 1200);
+      } catch {
+        setStatus('Nem sikerült vágólapra másolni', 'error');
+      }
+    });
+
+    load();
   </script>
 </body>
 </html>
