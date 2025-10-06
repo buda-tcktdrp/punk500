@@ -118,4 +118,78 @@
 
     sidEl.textContent = id || '—';
 
-    function se
+    function setStatus(msg, type) {
+      statusEl.textContent = msg;
+      statusEl.className = 'status' + (type ? ' ' + type : '');
+    }
+
+    async function load() {
+      if (!id) {
+        setStatus('Hiányzik az id paraméter (?id=...).', 'error');
+        return;
+      }
+      setStatus('Loading…');
+
+      try {
+        const r = await fetch(`/api/session/${encodeURIComponent(id)}`, { cache: 'no-store' });
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) {
+          const detail = data?.detail ? ` (${String(data.detail).slice(0,160)})` : '';
+          throw new Error(data?.error || `Hiba a betöltés közben${detail}`);
+        }
+
+        // progress bar (0..100)
+        const pct = Math.max(0, Math.min(100, Number(data.progress ?? 0)));
+        bar.style.width = pct + '%';
+        progressLabel.textContent = `${pct} / 500`;
+
+        kListened.textContent = String(data.listened ?? 0);
+        kSkipped.textContent = String(data.skipped ?? 0);
+        kNotes.textContent = String(data.notes ?? 0);
+        kRatings.textContent = String(data.ratings ?? 0);
+
+        rawEl.textContent = JSON.stringify(data, null, 2);
+        setStatus('Loaded', 'ok');
+
+        // local notes restore
+        const localKey = `td-local-notes:${id}`;
+        localNotes.value = localStorage.getItem(localKey) || '';
+        localState.textContent = localNotes.value ? 'Saved locally' : 'Not saved';
+
+      } catch (err) {
+        setStatus(String(err.message || err), 'error');
+      }
+    }
+
+    document.getElementById('saveLocal').addEventListener('click', () => {
+      if (!id) return;
+      const localKey = `td-local-notes:${id}`;
+      localStorage.setItem(localKey, localNotes.value);
+      localState.textContent = 'Saved locally';
+    });
+
+    document.getElementById('clearLocal').addEventListener('click', () => {
+      if (!id) return;
+      const localKey = `td-local-notes:${id}`;
+      localStorage.removeItem(localKey);
+      localNotes.value = '';
+      localState.textContent = 'Not saved';
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', load);
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        const url = new URL(location.href);
+        await navigator.clipboard.writeText(url.toString());
+        setStatus('Link copied', 'ok');
+        setTimeout(() => setStatus('Loaded', 'ok'), 1200);
+      } catch {
+        setStatus('Nem sikerült vágólapra másolni', 'error');
+      }
+    });
+
+    load();
+  </script>
+</body>
+</html>

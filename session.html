@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="hu">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -39,7 +39,7 @@
 <body>
   <div class="wrap">
     <h1>Your session</h1>
-    <p class="sub">Placeholder page to confirm routing and show the stored session state.</p>
+    <p class="sub">Placeholder page to confirm routing and display the stored session state.</p>
 
     <div class="card" style="margin-bottom:16px">
       <div class="head">
@@ -125,7 +125,7 @@
 
     async function load() {
       if (!id) {
-        setStatus('Hiányzik az id paraméter (?id=...).', 'error');
+        setStatus('Missing id parameter (?id=...).', 'error');
         return;
       }
       setStatus('Loading…');
@@ -135,10 +135,9 @@
         const data = await r.json().catch(() => ({}));
         if (!r.ok) {
           const detail = data?.detail ? ` (${String(data.detail).slice(0,160)})` : '';
-          throw new Error(data?.error || `Hiba a betöltés közben${detail}`);
+          throw new Error(data?.error || `Failed to load session${detail}`);
         }
 
-        // progress bar (0..100)
         const pct = Math.max(0, Math.min(100, Number(data.progress ?? 0)));
         bar.style.width = pct + '%';
         progressLabel.textContent = `${pct} / 500`;
@@ -151,7 +150,6 @@
         rawEl.textContent = JSON.stringify(data, null, 2);
         setStatus('Loaded', 'ok');
 
-        // local notes restore
         const localKey = `td-local-notes:${id}`;
         localNotes.value = localStorage.getItem(localKey) || '';
         localState.textContent = localNotes.value ? 'Saved locally' : 'Not saved';
@@ -180,12 +178,11 @@
 
     copyBtn.addEventListener('click', async () => {
       try {
-        const url = new URL(location.href);
-        await navigator.clipboard.writeText(url.toString());
+        await navigator.clipboard.writeText(location.href);
         setStatus('Link copied', 'ok');
         setTimeout(() => setStatus('Loaded', 'ok'), 1200);
       } catch {
-        setStatus('Nem sikerült vágólapra másolni', 'error');
+        setStatus('Could not copy to clipboard', 'error');
       }
     });
 
