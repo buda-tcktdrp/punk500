@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="hu">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -18,39 +18,42 @@
     .row { display: grid; gap: 8px; }
     .consent { display: flex; gap: 10px; align-items: start; font-size: 14px; color:#cfcfcf; }
     .consent input { transform: translateY(3px); }
-    .actions { display: flex; gap: 12px; align-items: center; }
+    .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
     button {
       appearance: none; border: 1px solid #2a2a2a; background: #161616; color: #e6e6e6;
       padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 600;
     }
-    button[disabled] { opacity: .6; cursor: not-allowed; }
+    button[disabled] { opacity: .6; cursor: progress; }
     .msg { font-size: 14px; }
     .msg.error { color:#ff6b6b; }
     .msg.ok { color:#7bd88f; }
     a { color:#9ecbff; text-decoration: none; }
     a:hover { text-decoration: underline; }
+    small.hint { color:#a7a7a7; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Start your session</h1>
-    <p class="lead">Add meg a neved és az emailed. Létrehozzuk a sessiont, és kapsz egy visszaigazoló linket.</p>
+    <p class="lead">Enter your public name and email. We’ll create your session and send you a confirmation link.</p>
 
     <form id="startForm" novalidate>
       <div class="row">
         <label for="name">Public name</label>
-        <input id="name" name="name" type="text" placeholder="pl. Gabi" required />
+        <input id="name" name="name" type="text" placeholder="e.g. Gabi" autocomplete="nickname" required />
       </div>
 
       <div class="row">
         <label for="email">Email</label>
-        <input id="email" name="email" type="email" placeholder="te@pelda.hu" required />
+        <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required />
+        <small class="hint">We’ll only use this to manage your session.</small>
       </div>
 
       <div class="consent">
         <input id="consent" name="consent" type="checkbox" required />
         <label for="consent">
-          Elfogadom az adatkezelést. Röviden: a nevedet és emailedet csak a session működéséhez használjuk, nem adjuk tovább.
+          I agree to the data processing as described in the
+          <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.
         </label>
       </div>
 
@@ -60,7 +63,7 @@
       </div>
     </form>
 
-    <p style="margin-top:24px"><a href="/">← Vissza a landingre</a></p>
+    <p style="margin-top:24px"><a href="/">← Back to landing</a></p>
   </div>
 
   <script>
@@ -68,45 +71,54 @@
     const btn = document.getElementById('submitBtn');
     const statusEl = document.getElementById('status');
 
+    function setStatus(msg, type) {
+      statusEl.textContent = msg || '';
+      statusEl.className = 'msg' + (type ? ' ' + type : '');
+    }
+
+    function validEmail(v) {
+      // simple email sanity
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    }
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      statusEl.textContent = '';
-      statusEl.className = 'msg';
+      setStatus('', null);
       btn.disabled = true;
 
       const name = document.getElementById('name').value.trim();
       const email = document.getElementById('email').value.trim();
       const consent = document.getElementById('consent').checked;
 
-      if (!name || !email || !consent) {
-        statusEl.textContent = 'Hiányzó mezők.';
-        statusEl.classList.add('error');
-        btn.disabled = false;
-        return;
+      if (!name) {
+        setStatus('Please enter your public name.', 'error'); btn.disabled = false; return;
+      }
+      if (!email || !validEmail(email)) {
+        setStatus('Please enter a valid email address.', 'error'); btn.disabled = false; return;
+      }
+      if (!consent) {
+        setStatus('Please accept the Privacy Policy.', 'error'); btn.disabled = false; return;
       }
 
       try {
         const r = await fetch('/api/create-session', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, consent })
+          body: JSON.stringify({ name, email, consent: true })
         });
 
         const data = await r.json().catch(() => ({}));
 
         if (!r.ok || !data?.ok) {
-          const detail = data?.detail ? ` (${data.detail.slice(0, 160)})` : '';
-          throw new Error(data?.error || `Sikertelen kérés${detail}`);
+          // show backend detail to help debugging (e.g. JSON parse problems server-side)
+          const detail = data?.detail ? ` (${String(data.detail).slice(0,160)})` : '';
+          throw new Error(data?.error || `Request failed${detail}`);
         }
 
-        statusEl.textContent = 'Session létrehozva, átirányítás…';
-        statusEl.classList.add('ok');
-
-        // Redirect a visszaadott URL-re (pl. /session?id=<id>)
+        setStatus('Session created. Redirecting…', 'ok');
         location.href = data.url || `/session?id=${encodeURIComponent(data.id)}`;
       } catch (err) {
-        statusEl.textContent = String(err.message || err);
-        statusEl.classList.add('error');
+        setStatus(String(err.message || err), 'error');
       } finally {
         btn.disabled = false;
       }
