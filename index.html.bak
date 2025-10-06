@@ -51,25 +51,167 @@
     </div>
   </header>
 
-  <!-- index.html hero section ... -->
-  <div class="hero" style="position:relative; margin-bottom: 24px;">
-    <img src="assets/background.png" alt="Live punk show background" style="width:100%; border-radius:12px;" />
-
-    <p style="
-      position:absolute;
-      bottom:8px;
-      right:12px;
-      font-size:12px;
-      color:rgba(230,230,230,0.7);
-      margin:0;
-    ">
-      Photo by Farrah Skeiky for NPR
-    </p>
-  </div>
-
   <!-- HOW IT WORKS -->
   <section id="how" class="py-10">
     <div class="max-w-5xl mx-auto px-6">
       <h2 class="text-2xl md:text-3xl font-bold mb-6">How it works</h2>
       <div class="grid md:grid-cols-3 gap-6">
         <div class="card p-6">
+          <div class="text-sm uppercase tracking-widest text-slate-300 mb-2">1 — Start</div>
+          <p>Create your session and get a personal link. It’s your own route through the 500.</p>
+        </div>
+        <div class="card p-6">
+          <div class="text-sm uppercase tracking-widest text-slate-300 mb-2">2 — Weekdays only</div>
+          <p>Every Mon–Fri at midnight (Europe/Budapest) you get one album with a short blurb, cover, and Spotify / YouTube Music links.</p>
+        </div>
+        <div class="card p-6">
+          <div class="text-sm uppercase tracking-widest text-slate-300 mb-2">3 — Progress</div>
+          <p>Mark it as listened. Didn’t listen? It moves to the end of your queue. Finish all 500 like a champ.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- UNIFORM CARDS -->
+  <section id="start" class="py-12">
+    <div class="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-8 items-start">
+
+      <!-- Minor Threat -->
+      <article class="card p-6">
+        <div class="grid grid-cols-[120px,1fr] gap-5">
+          <div class="cover-box" data-cover-mt>Cover</div>
+          <div>
+            <h3 class="text-xl font-extrabold">Minor Threat — Out of Step (1983)</h3>
+            <p class="mt-2 italic text-slate-200">
+              “Out of Step channels conviction into velocity; a focused, fiercely moral record that crystallised hardcore’s next chapter.”
+            </p>
+            <p class="text-xs mt-1">
+              — <a href="https://www.loudersound.com/features/minor-threat-out-of-step-hardcore-punk-as-a-force-for-good" target="_blank" rel="noopener" class="underline">
+                Louder: <em>Minor Threat – Out of Step: Hardcore punk as a force for good</em>
+              </a>
+            </p>
+
+            <!-- OUTBOUND LINKS -->
+            <div class="mt-4 space-y-2">
+              <a id="mtSpotify" class="btn-white w-full">Open on Spotify</a>
+              <a id="mtYt" class="btn-white w-full">Open on YT Music</a>
+              <a id="mtDiscogs" class="btn-white w-full">Open on Discogs</a>
+            </div>
+
+            <!-- SESSION ACTIONS -->
+            <div class="mt-4 p-3 bg-black/60 rounded-lg border border-white/15">
+              <div class="flex flex-wrap gap-2">
+                <button class="px-4 py-2 rounded-lg border border-white text-white font-semibold">I listened to it</button>
+                <button class="px-4 py-2 rounded-lg border border-white text-white font-semibold">Skip today</button>
+              </div>
+              <div class="mt-4">
+                <div class="progress-track"><div class="progress-fill"></div></div>
+                <div class="mt-1 text-xs text-slate-300">Progress: 120 / 500</div>
+              </div>
+            </div>
+
+            <!-- OPTIONALS -->
+            <details class="mt-4">
+              <summary class="text-sm font-bold">Notes & rating</summary>
+              <textarea class="mt-2 w-full h-24 bg-black/70 border border-white/20 rounded-md p-2 text-sm" placeholder="Write your thoughts…"></textarea>
+              <div class="mt-2 text-sm">Rating: ☆ ☆ ☆ ☆ ☆</div>
+            </details>
+
+            <details class="mt-2">
+              <summary class="text-sm font-bold">Read more</summary>
+              <p class="mt-2 text-sm text-slate-200">Room for a longer excerpt or multiple source links (e.g., MRR issue ref, Punknews, AllMusic). Always with proper attribution.</p>
+            </details>
+          </div>
+        </div>
+      </article>
+
+      <!-- Discharge -->
+      <article class="card p-6">
+        <div class="grid grid-cols-[120px,1fr] gap-5">
+          <div class="cover-box" data-cover-dc>Cover</div>
+          <div>
+            <h3 class="text-xl font-extrabold">Discharge — Hear Nothing See Nothing Say Nothing (1982)</h3>
+            <p class="mt-2 italic text-slate-200">
+              “Minimal riffs, maximum impact: Hear Nothing… forged D-beat’s template and broadcast its fury worldwide.”
+            </p>
+            <p class="text-xs mt-1">
+              — <a href="https://www.loudersound.com/features/discharge-hear-nothing-see-nothing-say-nothing-album-story" target="_blank" rel="noopener" class="underline">
+                Louder: <em>Discharge – Hear Nothing, See Nothing, Say Nothing: the story of a game-changer</em>
+              </a>
+            </p>
+
+            <div class="mt-4 space-y-2">
+              <a id="dcSpotify" class="btn-white w-full">Open on Spotify</a>
+              <a id="dcYt" class="btn-white w-full">Open on YT Music</a>
+              <a id="dcDiscogs" class="btn-white w-full">Open on Discogs</a>
+            </div>
+
+            <div class="mt-4 p-3 bg-black/60 rounded-lg border border-white/15">
+              <div class="flex flex-wrap gap-2">
+                <button class="px-4 py-2 rounded-lg border border-white text-white font-semibold">I listened to it</button>
+                <button class="px-4 py-2 rounded-lg border border-white text-white font-semibold">Skip today</button>
+              </div>
+              <div class="mt-4">
+                <div class="progress-track"><div class="progress-fill" style="width:50%"></div></div>
+                <div class="mt-1 text-xs text-slate-300">Progress: 250 / 500</div>
+              </div>
+            </div>
+
+            <details class="mt-4">
+              <summary class="text-sm font-bold">Notes & rating</summary>
+              <textarea class="mt-2 w-full h-24 bg-black/70 border border-white/20 rounded-md p-2 text-sm" placeholder="Write your thoughts…"></textarea>
+              <div class="mt-2 text-sm">Rating: ☆ ☆ ☆ ☆ ☆</div>
+            </details>
+
+            <details class="mt-2">
+              <summary class="text-sm font-bold">Read more</summary>
+              <p class="mt-2 text-sm text-slate-200">Longer background text, review excerpts (<= ~25 words each) with links to sources.</p>
+            </details>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+  
+    <!-- CALL TO ACTION -->
+  <section class="py-16 text-center">
+    <a href="/start" class="px-8 py-4 bg-white text-black font-extrabold rounded-xl shadow-lg text-lg md:text-xl tracking-wide uppercase">
+      Start Your Journey Now
+    </a>
+  </section>
+
+  <footer class="py-10 text-center text-slate-200 text-sm bg-black/70">
+    <div class="max-w-5xl mx-auto px-6">© <span id="y"></span> TicketDrop</div>
+  </footer>
+
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    async function hydrate(artist, album, coverSel, ids) {
+      try{
+        const r = await fetch(`/api/album-meta?artist=${encodeURIComponent(artist)}&album=${encodeURIComponent(album)}`);
+        const data = await r.json();
+        const box = document.querySelector(coverSel);
+        if (box && data.coverUrl) {
+          box.style.backgroundImage = `url('${data.coverUrl}')`;
+          box.style.backgroundSize = 'cover';
+          box.style.backgroundPosition = 'center';
+          box.textContent = '';
+        }
+        if (ids.spotify && data.links?.spotifySearchUrl) document.getElementById(ids.spotify).href = data.links.spotifySearchUrl;
+        if (ids.yt && data.links?.ytMusicSearchUrl) document.getElementById(ids.yt).href = data.links.ytMusicSearchUrl;
+        if (ids.discogs && data.links?.discogsSearchUrl) document.getElementById(ids.discogs).href = data.links.discogsSearchUrl;
+      }catch(e){ console.error(e); }
+    }
+
+    hydrate("Minor Threat", "Out of Step", "[data-cover-mt]", {
+      spotify: "mtSpotify", yt: "mtYt", discogs: "mtDiscogs"
+    });
+
+    hydrate("Discharge", "Hear Nothing See Nothing Say Nothing", "[data-cover-dc]", {
+      spotify: "dcSpotify", yt: "dcYt", discogs: "dcDiscogs"
+    });
+  </script>
+</body>
+</html>
